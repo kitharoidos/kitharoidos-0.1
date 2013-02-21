@@ -1,0 +1,37 @@
+name: kitharoidos
+version: 0.0.1
+cabal-version: >=1.2
+build-type: Simple
+license: AllRightsReserved
+license-file: ""
+description: src
+data-dir: ""
+ 
+library
+    build-depends: 
+                   CCA -any,
+                   Euterpea -any,
+                   HCodecs -any,
+                   OpenGL -any,
+                   base -any,
+                   bytestring -any,
+                   cereal -any,
+                   mtl -any,
+                   vector
+    exposed-modules: Main
+    exposed: True
+    buildable: True
+    hs-source-dirs: src
+ 
+executable kitharoidos
+    build-depends: CCA -any, Euterpea -any, HCodecs -any, OpenGL -any,
+                   base -any, bytestring -any, cereal -any, mtl -any, vector -any
+    main-is: Main.hs
+    buildable: True
+    hs-source-dirs: src
+    other-modules: Kitharoidos.EditPars Kitharoidos.GenInput
+                   Kitharoidos.GFNN Kitharoidos.InitGFNN Kitharoidos.Pars
+                   Kitharoidos.RenderGFNN Kitharoidos.RunGFNN
+    ghc-options: -O2 -rtsopts
+
+ 

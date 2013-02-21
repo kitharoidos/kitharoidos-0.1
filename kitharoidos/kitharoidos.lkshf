@@ -1,0 +1,13 @@
+Config flags:  "--user"
+Build flags:   "--ghc-option=-O2 --ghc-option=-funbox-strict-fields --ghc-option=-fllvm --ghc-option=-threaded"
+Test flags:    ""
+Haddock flags: ""
+Executable flags:
+               "+RTS -N2 -RTS"
+Install flags: ""
+Register flags:
+               ""
+Unregister flags:
+               ""
+Source Distribution flags:
+               ""

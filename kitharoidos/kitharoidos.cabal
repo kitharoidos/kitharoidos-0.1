@@ -1,0 +1,33 @@
+name: kitharoidos
+version: 0.0.1
+cabal-version: >=1.2
+build-type: Simple
+license: AllRightsReserved
+license-file: ""
+description:  
+data-dir: ""
+ 
+executable kitharoidos
+    build-depends: Chart -any, GLFW -any, GLUT -any, OpenGL -any,
+                   PortMidi -any, base -any, colour -any, contstuff -any,
+                   data-accessor -any, ieee -any, statistics -any, stm -any,
+                   stm-chans -any, vector -any
+    main-is: Main.hs
+    buildable: True
+    extra-lib-dirs: /usr/lib
+    hs-source-dirs: src
+    other-modules: Kitharoidos.Pars Experiments Kitharoidos
+                   Kitharoidos.MusicCalc Kitharoidos.Pars
+                   Kitharoidos.GFNNCanvas.CanvasPars
+                   Kitharoidos.MIDIReceiver.ReceiverPars
+ 
+test-suite test-kitharoidos
+    build-depends: Chart -any, GLFW -any, GLUT -any, OpenGL -any,
+                   PortMidi -any, base -any, colour -any, contstuff -any,
+                   data-accessor -any, ieee -any, statistics -any, stm -any,
+                   stm-chans -any, vector -any
+    type: exitcode-stdio-1.0
+    main-is: Main.hs
+    buildable: True
+    cpp-options: -DMAIN_FUNCTION=testMain
+    hs-source-dirs: src
