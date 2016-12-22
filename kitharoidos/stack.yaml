@@ -1,0 +1,10 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+extra-deps:
+- GLFW-0.5.2.5
+- PortMidi-0.1.6.1
+- contstuff-1.2.6
+- ieee-0.7
+resolver: lts-7.10
