@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNCanvas
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.GFNNCanvas (
   CanvasPars (CanvasPars, canvasSize, canvasColor),
   runGFNNCanvas
@@ -26,13 +12,7 @@ import Kitharoidos.GFNNCanvas.TerminateCanvas
 import Control.Monad
 import Control.Exception
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run canvas for rendering GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run canvas for rendering GFNN.
 runGFNNCanvas :: CanvasPars -> IO (IO ()) -> IO ()
 runGFNNCanvas canvasPars receiveRendering
   = bracket_ (bracketOnError initCanvas (const terminateCanvas) (const $ displayCanvas canvasPars))

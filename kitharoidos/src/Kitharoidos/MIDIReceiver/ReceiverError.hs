@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.MIDIReceiver.ReceiverError
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE DeriveDataTypeable, TypeFamilies #-}
 
 module Kitharoidos.MIDIReceiver.ReceiverError (
@@ -25,13 +11,7 @@ import Control.ContStuff
 import Data.Typeable
 import qualified Control.Exception as E
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Errors thrown by MIDI receiver
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Errors thrown by MIDI receiver.
 data ReceiverError =  PMInitializationError PMError
                     | NoInputDeviceError
                     | PMStreamOpeningError PMError

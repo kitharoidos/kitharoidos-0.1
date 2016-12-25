@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNSimulator.InitSimulator
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNSimulator.InitSimulator (
@@ -31,13 +17,7 @@ import Control.ContStuff
 import Control.Monad.ST
 import Data.Complex
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Initialize GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Initialize GFNN.
 initSimulator :: Architecture -> SimulatorPars -> StateT r GFNN m ()
 initSimulator architecture simulatorPars
   = do setOscLayout architecture
@@ -59,11 +39,7 @@ initSimulator architecture simulatorPars
        setDt simulatorPars
        setCnt
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set layout of oscillators (1 = oscillator with external input)
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set layout of oscillators (1 = oscillator with external input).
 setOscLayout :: Architecture -> StateT r GFNN m ()
 setOscLayout Architecture { Kitharoidos.GFNNArchitect.inputOscIDs
                           , Kitharoidos.GFNNArchitect.hiddOscIDs
@@ -76,11 +52,7 @@ setOscLayout Architecture { Kitharoidos.GFNNArchitect.inputOscIDs
                                  )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set parameters of equations of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set parameters of equations of neural oscillators.
 setOscEqPars :: Architecture -> SimulatorPars -> StateT r GFNN m ()
 setOscEqPars Architecture  {oscLIDs, oscPitches} SimulatorPars {oscLPars}
   = StateT
@@ -96,18 +68,14 @@ setOscEqPars Architecture  {oscLIDs, oscPitches} SimulatorPars {oscLPars}
                         }
                      )
       }
-    where midiPitch2Freq = \midiPitch -> 2 ** ((midiPitch - 69) / 12) * 440
+    where midiPitch2Freq midiPitch = 2 ** ((midiPitch - 69) / 12) * 440
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set maximal amplitudes of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set maximal amplitudes of neural oscillators.
 setMaxRZs :: StateT r GFNN m ()
 setMaxRZs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {oscEqPars}) ->
+         = \cont gfnn@GFNN {oscEqPars} ->
              cont () (gfnn
                         {maxRZs
                            = G.convert $ G.map (\(_, _, _, e) -> 1 / sqrt e) oscEqPars
@@ -115,76 +83,52 @@ setMaxRZs
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set state of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set state of neural oscillators.
 setZs :: StateT r GFNN m ()
 setZs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {maxRZs}) ->
+         = \cont gfnn@GFNN {maxRZs} ->
              cont () (gfnn {zs = V.map (\maxRZ -> (1e-3 * maxRZ, 0)) maxRZs})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set time derivatives of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set time derivatives of neural oscillators.
 setZs' :: StateT r GFNN m ()
 setZs'
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {zs}) ->
+         = \cont gfnn@GFNN {zs} ->
              cont () (gfnn {zs' = V.replicate (V.length zs) (0, 0)})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set average amplitudes of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set average amplitudes of neural oscillators.
 setAvgRZs :: StateT r GFNN m ()
 setAvgRZs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {zs}) ->
+         = \cont gfnn@GFNN {zs} ->
              cont () (gfnn {avgRZs = V.replicate (V.length zs) 0})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set average time derivatives of phases of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set average time derivatives of phases of neural oscillators.
 setAvgPhiZs' :: StateT r GFNN m ()
 setAvgPhiZs'
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {zs}) ->
+         = \cont gfnn@GFNN {zs} ->
              cont () (gfnn {avgPhiZs' = V.replicate (V.length zs) 0})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set inputs to neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set inputs to neural oscillators.
 setInputs :: StateT r GFNN m ()
 setInputs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {zs}) ->
+         = \cont gfnn@GFNN {zs} ->
              cont () (gfnn {inputs = V.replicate (V.length zs) (0 :+ 0)})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set layout of connections (1 = fixed connection)
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set layout of connections (1 = fixed connection).
 setConnLayout :: Architecture -> StateT r GFNN m ()
 setConnLayout Architecture { Kitharoidos.GFNNArchitect.fixedConnIDs
                            , Kitharoidos.GFNNArchitect.hebbConnIDs
@@ -197,11 +141,7 @@ setConnLayout Architecture { Kitharoidos.GFNNArchitect.fixedConnIDs
                                  )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set targets and sources of connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set targets and sources of connections.
 setEdges :: Architecture -> StateT r GFNN m ()
 setEdges Architecture {Kitharoidos.GFNNArchitect.is, Kitharoidos.GFNNArchitect.js}
   = StateT
@@ -210,11 +150,7 @@ setEdges Architecture {Kitharoidos.GFNNArchitect.is, Kitharoidos.GFNNArchitect.j
              cont () (gfnn {Kitharoidos.GFNNSimulator.GFNN.is, Kitharoidos.GFNNSimulator.GFNN.js})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set parameters of equations of Hebbian connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set parameters of equations of Hebbian connections.
 setConnEqPars :: Architecture -> SimulatorPars -> StateT r GFNN m ()
 setConnEqPars Architecture {connLIDs} SimulatorPars {connLPars}
   = StateT
@@ -222,16 +158,13 @@ setConnEqPars Architecture {connLIDs} SimulatorPars {connLPars}
          = \cont gfnn ->
              cont () (gfnn {connEqPars = G.backpermute connLPars (G.convert connLIDs)})
       }
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set maximal amplitudes of connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+
+-- | Set maximal amplitudes of connections.
 setMaxRCs :: StateT r GFNN m ()
 setMaxRCs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {connEqPars}) ->
+         = \cont gfnn@GFNN {connEqPars} ->
              cont () (gfnn
                         {maxRCs
                           = G.convert $ G.map (\(_, _, e) -> 1 / sqrt e) connEqPars
@@ -239,11 +172,7 @@ setMaxRCs
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set state of connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set state of connections.
 setCs :: Architecture -> SimulatorPars -> StateT r GFNN m ()
 setCs Architecture { oscPitches, connLIDs
                    , Kitharoidos.GFNNArchitect.fixedConnIDs, Kitharoidos.GFNNArchitect.hebbConnIDs
@@ -252,7 +181,7 @@ setCs Architecture { oscPitches, connLIDs
       SimulatorPars {connKernel}
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {maxRCs}) ->
+         = \cont gfnn@GFNN {maxRCs} ->
              cont () (gfnn
                         {cs = runST $ do
                            v <- M.unsafeNew $ V.length maxRCs
@@ -268,35 +197,27 @@ setCs Architecture { oscPitches, connLIDs
     where pitchis = V.backpermute oscPitches is
           pitchjs = V.backpermute oscPitches js
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set time derivatives of connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set time derivatives of connections.
 setCs' :: StateT r GFNN m ()
 setCs'
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {cs}) ->
+         = \cont gfnn@GFNN {cs} ->
              cont () (gfnn {cs' = V.replicate (V.length cs) (0, 0)})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set average amplitudes of connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set average amplitudes of connections.
 setAvgRCs :: Architecture -> StateT r GFNN m ()
 setAvgRCs Architecture { Kitharoidos.GFNNArchitect.fixedConnIDs
                        , Kitharoidos.GFNNArchitect.hebbConnIDs
                        }
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {maxRCs, cs}) ->
+         = \cont gfnn@GFNN {maxRCs, cs} ->
              cont () (gfnn
                         {avgRCs = runST $ do v <- M.unsafeNew $ V.length maxRCs
                                              V.mapM_ (\i -> M.unsafeWrite v i $
-                                                            (fst $ cs V.! i) / (maxRCs V.! i)
+                                                            fst (cs V.! i) / (maxRCs V.! i)
                                                      )
                                                      fixedConnIDs
                                              V.mapM_ (\i -> M.unsafeWrite v i 0)
@@ -306,11 +227,7 @@ setAvgRCs Architecture { Kitharoidos.GFNNArchitect.fixedConnIDs
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set time step
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set time step.
 setDt :: SimulatorPars -> StateT r GFNN m ()
 setDt SimulatorPars {gfnnDt}
   = StateT
@@ -319,11 +236,7 @@ setDt SimulatorPars {gfnnDt}
              cont () (gfnn {dt = gfnnDt})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set counter of steps since the last view
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set counter of steps since the last view.
 setCnt :: StateT r GFNN m ()
 setCnt
   = StateT

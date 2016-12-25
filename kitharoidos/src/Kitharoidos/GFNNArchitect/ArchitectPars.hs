@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNArchitect.ArchitectPars
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNArchitect.ArchitectPars (
@@ -21,13 +7,7 @@ module Kitharoidos.GFNNArchitect.ArchitectPars (
 import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector as G
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Parameters for GFNN architect
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Parameters for GFNN architect.
 data ArchitectPars = ArchitectPars { inputOscLIDs  :: !(V.Vector Int)
                                    , hiddOscLIDs   :: !(V.Vector Int)
                                    , oscLPitches   :: !(G.Vector (V.Vector Double))
@@ -43,4 +23,3 @@ instance Show ArchitectPars where
       "  oscLPitches:"  ++ show (G.map V.toList oscLPitches) ++ "\n\n" ++
       "  fixedConnLIDs" ++ show (V.toList fixedConnLIDs)     ++ "\n\n" ++
       "  hebbConnLIDs"  ++ show (V.toList hebbConnLIDs)      ++ "\n\n\n"
-

@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNArchitect.Architecture
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNArchitect.Architecture (
@@ -23,13 +9,7 @@ module Kitharoidos.GFNNArchitect.Architecture (
 
 import qualified Data.Vector.Unboxed as V
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- GFNN architecture
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | GFNN architecture.
 data Architecture = Architecture { oscLN        :: !Int
                                  , oscLIDs      :: !(V.Vector Int)
                                  , inputOscIDs  :: !(V.Vector Int)
@@ -59,8 +39,7 @@ instance Show Architecture where
       "  is: "           ++ show (V.toList is)           ++ "\n\n" ++
       "  js: "           ++ show (V.toList js) ++ "\n\n\n"
 
-----------------------------------------------------------------------------------------------------
--- empty architecture
+-- | Empty architecture.
 emptyArchitecture :: Architecture
 emptyArchitecture = Architecture { oscLN        = 0
                                  , oscLIDs      = V.empty
@@ -74,4 +53,3 @@ emptyArchitecture = Architecture { oscLN        = 0
                                  , is           = V.empty
                                  , js           = V.empty
                                  }
-----------------------------------------------------------------------------------------------------

@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNRenderer.RendererPars
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNRenderer.RendererPars (
@@ -23,13 +9,7 @@ module Kitharoidos.GFNNRenderer.RendererPars (
 
 import Graphics.Rendering.OpenGL
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Parameters for GFNN renderer
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Parameters for GFNN renderer.
 data RendererPars = RendererPars { staffLineD      :: !Double
                                  , staffD          :: !Double
                                  , ledgeLineN      :: !Int
@@ -42,4 +22,3 @@ data RendererPars = RendererPars { staffLineD      :: !Double
                                  , ledgeLineColor  :: !(Color3 Double)
                                  , noteHeadHeight  :: !Double
                                  } deriving Show
-

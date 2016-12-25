@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNSimulator.ViewGFNN
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNSimulator.ViewGFNN (
@@ -25,19 +11,13 @@ import qualified Data.Vector.Unboxed.Mutable as M
 import Control.Monad.ST
 import Control.ContStuff
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- View GFNN for rendering
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | View GFNN for rendering.
 viewGFNN :: StateT r GFNN m View
 viewGFNN
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {fixedConnIDs, hebbConnIDs, maxRZs, maxRCs, avgRZs, avgPhiZs', avgRCs, cnt}) ->
-             cont (View { normAvgRZs = runST $ do
+         = \cont gfnn@GFNN {fixedConnIDs, hebbConnIDs, maxRZs, maxRCs, avgRZs, avgPhiZs', avgRCs, cnt} ->
+             cont  View { normAvgRZs = runST $ do
                             avgRZs1     <- V.unsafeThaw avgRZs
                             normAvgRZs1 <- M.unsafeNew $ M.length avgRZs1
                             V.mapM_ (\(ix, maxRZ) -> do
@@ -77,6 +57,5 @@ viewGFNN
                             V.unsafeFreeze avgRCs1
                             V.unsafeFreeze normAvgRCs1
                         }
-                  )
-                  (gfnn {cnt = 0})
+                  gfnn {cnt = 0}
       }

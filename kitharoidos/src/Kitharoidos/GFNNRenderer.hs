@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNRenderer
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.GFNNRenderer (
   RendererPars (RendererPars, staffLineD, staffD, ledgeLineN, clefSize, clefPadding, clefIndent
                             , staffLineWidth, staffLineColor, ledgeLineWidth, ledgeLineColor
@@ -29,13 +15,7 @@ import Kitharoidos.GFNNSimulator (View)
 import Control.ContStuff
 import Control.Monad
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run GFNN renderer
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run GFNN renderer.
 runGFNNRenderer :: Architecture -> RendererPars -> IO View -> (IO () -> IO ()) -> IO ()
 runGFNNRenderer architecture rendererPars readView sendRendering
   = evalStateT emptyRendererState $ do

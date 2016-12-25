@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Experiments
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Experiments (
   experiment0
 ) where
@@ -23,13 +9,7 @@ import Data.Complex
 import Data.List
 import Graphics.Rendering.OpenGL
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- GFNN experiments
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | GFNN experiments.
 experiment0
   = Pars
       { receiverPars
@@ -49,9 +29,9 @@ experiment0
               }
       , generatorPars
           = GeneratorPars
-              { freqs      = let micr = \p -> if (p - 1) `mod` 12 == 0 || (p - 5) `mod` 12 == 0
-                                                then midiPitchToFreq (fromIntegral p - 0.5)
-                                                else midiPitchToFreq (fromIntegral p)
+              { freqs      = let micr p = if (p - 1) `mod` 12 == 0 || (p - 5) `mod` 12 == 0
+                                            then midiPitchToFreq (fromIntegral p - 0.5)
+                                            else midiPitchToFreq (fromIntegral p)
                              in
                                  -- V.generate 128 micr
                                  V.generate 128 (midiPitchToFreq . fromIntegral)

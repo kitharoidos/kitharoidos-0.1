@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.Pars
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.Pars (
   Pars (Pars, receiverPars, architectPars, generatorPars, simulatorPars, rendererPars, canvasPars)
 ) where
@@ -23,13 +9,7 @@ import Kitharoidos.GFNNSimulator
 import Kitharoidos.GFNNRenderer
 import Kitharoidos.GFNNCanvas
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Parameters of Kitharoidos
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Parameters of Kitharoidos.
 data Pars = Pars { receiverPars  :: ReceiverPars
                  , architectPars :: ArchitectPars
                  , generatorPars :: GeneratorPars

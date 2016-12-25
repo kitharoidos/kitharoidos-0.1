@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNSimulator.RunGFNN
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNSimulator.RunGFNN (
@@ -28,13 +14,7 @@ import qualified Data.Vector.Unboxed.Mutable as M
 import qualified Data.Vector as G
 import Data.Complex
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run GFNN.
 runGFNN :: (Double, Double) -> StateT r GFNN m ()
 runGFNN xe = do diffZs xe
                 integrZs'
@@ -44,25 +24,19 @@ runGFNN xe = do diffZs xe
 
                 updAvgs
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- differentiate zs
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Differentiate zs.
 diffZs :: (Double, Double) -> StateT r GFNN m ()
 diffZs xe
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {inputOscIDs, hiddOscIDs, oscEqPars, is, js, zs, zs', cs, maxRCs, inputs}) ->
-             (runST $ do xs   <- V.unsafeThaw inputs
+         = \cont gfnn@GFNN {inputOscIDs, hiddOscIDs, oscEqPars, is, js, zs, zs', cs, maxRCs, inputs} ->
+              runST  (do xs   <- V.unsafeThaw inputs
                          V.mapM_ (\ix -> M.unsafeWrite xs ix xec     ) inputOscIDs
                          V.mapM_ (\ix -> M.unsafeWrite xs ix $ 0 :+ 0) hiddOscIDs
-                         V.mapM_ (\(i, (rC, phiC), maxRC, j) -> if rC > 1e-3 * maxRC
-                                    then do
-                                      xi <- M.unsafeRead xs i
-                                      let (rZ, phiZ) = zs V.! j
-                                      M.unsafeWrite xs i $ xi + mkPolar (rC * rZ) (phiC + phiZ)
-                                    else return ()
+                         V.mapM_ (\(i, (rC, phiC), maxRC, j) -> when (rC > 1e-3 * maxRC) $
+                                    do xi <- M.unsafeRead xs i
+                                       let (rZ, phiZ) = zs V.! j
+                                       M.unsafeWrite xs i $ xi + mkPolar (rC * rZ) (phiC + phiZ)
                                  )
                                  (V.zip4 is cs maxRCs js)
                          V.unsafeFreeze xs
@@ -74,11 +48,11 @@ diffZs xe
                                  (V.indexed $ V.zip zs inputs)
                          V.unsafeFreeze zs1'
              ) `seq`
-             (cont () gfnn)
+             cont () gfnn
       }
     where xec = uncurry mkPolar xe
 
--- equations for amplitude and phase of canonical neural oscillator with an input
+-- | Equations for amplitude and phase of canonical neural oscillator with an input.
 oscEq :: (Double, Double, V.Vector (Double, Double), Double) ->
          (Double, Double) -> (Double, Double) -> (Double, Double)
 oscEq (f, alpha, betasDeltas, epsilon) (rZ, phiZ) (rX, thetaX)
@@ -100,26 +74,22 @@ oscEq (f, alpha, betasDeltas, epsilon) (rZ, phiZ) (rX, thetaX)
    )
    where (betas, deltas) = V.unzip betasDeltas
 
--- sum higher order terms
+-- | Sum higher order terms.
 sumHOTs :: (V.Vector Double, Double) -> Double -> Double
 sumHOTs (pars, epsilon) rZ
-  = V.sum $ V.map (\(k, par) -> (if k < p then id else (/ (1 - epsilon * rZ ^ 2))) $
+  = V.sum $ V.map (\(k, par) -> (if k < p then id else (/ (1 - epsilon * rZ ^ 2)))
                                 (par * epsilon ^ k * rZ ^ (2 * (k + 1)))
                   )
                   (V.indexed pars)
     where p = V.length pars - 1
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- integrate zs' numerically
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Integrate zs' numerically
 integrZs' :: StateT r GFNN m ()
 integrZs'
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {zs, zs', maxRZs, dt}) ->
-             (runST $ do zs1 <- V.unsafeThaw zs
+         = \cont gfnn@GFNN {zs, zs', maxRZs, dt} ->
+              runST  (do zs1 <- V.unsafeThaw zs
                          V.mapM_ (\(ix, ((rZ', phiZ'), maxRZ)) -> do
                                     (rZ, phiZ) <- M.unsafeRead zs1 ix
                                     M.unsafeWrite zs1 ix $
@@ -129,20 +99,16 @@ integrZs'
                                  (V.indexed $ V.zip zs' maxRZs)
                          V.unsafeFreeze zs1
              ) `seq`
-             (cont () gfnn)
+             cont () gfnn
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- differentiate cs
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Differentiate cs.
 diffCs :: StateT r GFNN m ()
 diffCs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {hebbConnIDs, is, js, connEqPars, zs, cs, cs'}) ->
-             (runST $ do cs1' <- V.unsafeThaw cs'
+         = \cont gfnn@GFNN {hebbConnIDs, is, js, connEqPars, zs, cs, cs'} ->
+              runST  (do cs1' <- V.unsafeThaw cs'
                          V.mapM_ (\ix -> M.unsafeWrite cs1' ix $
                                          connEq (connEqPars G.! ix)  (zs V.! (is V.! ix))
                                                 (zs V.! (js V.! ix)) (cs V.! ix)
@@ -150,10 +116,10 @@ diffCs
                                  hebbConnIDs
                          V.unsafeFreeze cs1'
              ) `seq`
-             (cont () gfnn)
+             cont () gfnn
       }
 
--- equations for amplitude and phase of Hebbian connection
+-- | Equations for amplitude and phase of Hebbian connection.
 connEq :: (Double, Double, Double) -> (Double, Double) -> (Double, Double) -> (Double, Double) -> (Double, Double)
 connEq (deltaij, kij, epsilon) zi zj c
   = undefined
@@ -185,17 +151,13 @@ connEq (deltaij, kij, epsilon) zi zj c
 --      )
 --    )
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- integrate cs' numerically
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Integrate cs' numerically.
 integrCs' :: StateT r GFNN m ()
 integrCs'
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {hebbConnIDs, cs, cs', dt}) ->
-             (runST $ do cs1 <- V.unsafeThaw cs
+         = \cont gfnn@GFNN {hebbConnIDs, cs, cs', dt} ->
+              runST  (do cs1 <- V.unsafeThaw cs
                          V.mapM_ (\ix -> do
                                     (rC, phiC) <- M.unsafeRead cs1 ix
                                     let (rC', phiC') = cs'    V.! ix
@@ -205,28 +167,22 @@ integrCs'
                                  hebbConnIDs
                          V.unsafeFreeze cs1
              ) `seq`
-             (cont () gfnn)
+             cont () gfnn
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- update averages
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Update averages.
 updAvgs :: StateT r GFNN m ()
 updAvgs
   = StateT
       {getStateT
-         = \cont gfnn@(GFNN {hebbConnIDs, zs, zs', cs, avgRZs, avgPhiZs', avgRCs, cnt}) ->
+         = \cont gfnn@GFNN {hebbConnIDs, zs, zs', cs, avgRZs, avgPhiZs', avgRCs, cnt} ->
              addTo avgRZs    (fst $ V.unzip zs ) (V.enumFromN 0 $ V.length zs ) `seq`
              addTo avgPhiZs' (snd $ V.unzip zs') (V.enumFromN 0 $ V.length zs') `seq`
              addTo avgRCs    (fst $ V.unzip cs ) hebbConnIDs                    `seq`
              cont () (gfnn {cnt = cnt + 1})
       }
 
-----------------------------------------------------------------------------------------------------
--- add source vector to target vector on selected positions
-----------------------------------------------------------------------------------------------------
+-- | Add source vector to target vector on selected positions.
 addTo :: V.Vector Double -> V.Vector Double -> V.Vector Int -> V.Vector Double
 addTo targ src ics
   = runST $ do targ1 <- V.unsafeThaw targ

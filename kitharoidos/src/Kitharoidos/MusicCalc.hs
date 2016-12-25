@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.MusicCalc
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.MusicCalc (
   freqToStaffPos, midiPitchToStaffPos, freqToMidiPitch, midiPitchToFreq,
   conn12TET, gauss
@@ -23,13 +9,7 @@ import Statistics.Distribution
 import Statistics.Distribution.Normal
 import qualified Data.Vector.Unboxed as V
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Calculator for musical parameters
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Calculator for musical parameters.
 freqToStaffPos :: Double -> Double -> Double
 freqToStaffPos staffLineD freq = midiPitchToStaffPos staffLineD $ freqToMidiPitch freq
 
@@ -46,8 +26,8 @@ midiPitchToFreq midiPitch = 8.1757989156 * 2 ** (midiPitch / 12)
 
 conn12TET :: Double -> Double -> Double -> Double -> Double -> Double
 conn12TET maxRC loc tol pitchi pitchj
-  | nstMel  /= Nothing = maxRC * melInt12TETProf     V.! (fromJust nstMel)
-  | nstHarm /= Nothing = maxRC * harmIntCls12TETProf V.! (fromJust nstHarm)
+  | isJust nstMel  = maxRC * melInt12TETProf     V.! fromJust nstMel
+  | isJust nstHarm = maxRC * harmIntCls12TETProf V.! fromJust nstHarm
   | otherwise          = 0
     where nstMel  = findNst loc intji             melInts12TET
           nstHarm = findNst tol (intji `mod'` 12) harmIntClss12TET

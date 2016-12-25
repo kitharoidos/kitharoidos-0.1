@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.InputGenerator.DriveGenerator
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.InputGenerator.DriveGenerator (
@@ -26,13 +12,7 @@ import qualified Data.Vector.Unboxed.Mutable as M
 import Data.STRef
 import Sound.PortMidi
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Drive input generator by MIDI
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Drive input generator by MIDI.
 driveGenerator :: (Monad m) => [PMEvent] -> StateT r GeneratorState m Double
 driveGenerator midi
   = StateT

@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.InputGenerator
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.InputGenerator (
   GeneratorPars (GeneratorPars, freqs, buffSize, chunkSize, r', inputDt, maxRX),
   runInputGenerator, r, phi
@@ -28,18 +14,10 @@ import Sound.PortMidi
 import qualified Data.Vector.Unboxed as V
 import Data.Complex
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run input generator
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run input generator.
 runInputGenerator :: GeneratorPars -> IO [PMEvent] -> (V.Vector (Double, Double) -> IO ()) -> IO ()
 runInputGenerator generatorPars receiveMidi sendInputs
   = evalStateT emptyGeneratorState $ do
       initGenerator generatorPars
-      forever $ do
-        liftIO receiveMidi >>= driveGenerator >>= \tsim -> if tsim >= 0
-                                                    then generateInputs >>= (liftIO . sendInputs)
-                                                    else return ()
+      forever $
+        liftIO receiveMidi >>= driveGenerator >>= \tsim -> when (tsim >= 0) (generateInputs >>= (liftIO . sendInputs))

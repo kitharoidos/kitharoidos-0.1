@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos (
@@ -46,13 +32,7 @@ import Control.Exception
 import Control.Monad
 import Data.IORef
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run Kitharoidos
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run Kitharoidos.
 runKitharoidos :: Pars -> IO ()
 runKitharoidos Pars { receiverPars, architectPars, generatorPars
                     , simulatorPars, rendererPars, canvasPars
@@ -77,7 +57,7 @@ runKitharoidos Pars { receiverPars, architectPars, generatorPars
                              (atomically $ readTBChan  view)      (atomically . writeTBChan rendering)
 
   runGFNNCanvas              canvasPars
-                             ((atomically $ tryReadTBChan rendering) >>=
+                             (atomically (tryReadTBChan rendering) >>=
                                 (\mRend -> case mRend of
                                    Nothing   -> readIORef renderingBuff
                                    Just rend -> writeIORef renderingBuff rend >> return rend

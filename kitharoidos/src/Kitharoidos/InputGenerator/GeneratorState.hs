@@ -1,16 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.InputGenerator.GeneratorState
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.InputGenerator.GeneratorState (
@@ -20,13 +7,7 @@ module Kitharoidos.InputGenerator.GeneratorState (
 
 import qualified Data.Vector.Unboxed as V
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- State of input generator
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | State of input generator.
 data GeneratorState = GeneratorState { freqs     :: !(V.Vector Double)
                                      , oscIDs    :: !(V.Vector Int)
                                      , envs      :: !(V.Vector (Double, Double, Double))
@@ -40,7 +21,7 @@ data GeneratorState = GeneratorState { freqs     :: !(V.Vector Double)
                                      }
 
 instance Show GeneratorState where
-  show (GeneratorState {freqs, oscIDs, envs, envIA, buffPtrs, tsim, dt, r', maxRX, chunkSize})
+  show GeneratorState {freqs, oscIDs, envs, envIA, buffPtrs, tsim, dt, r', maxRX, chunkSize}
     = "generatorState: "   ++ "\n\n" ++
       "  freqs: "    ++ show (V.toList freqs)    ++ "\n\n" ++
       "  oscIDs: "   ++ show (V.toList oscIDs)   ++ "\n\n" ++
@@ -53,8 +34,7 @@ instance Show GeneratorState where
       "  maxRX: "    ++ show maxRX               ++ "\n\n" ++
       "  chunkSize:" ++ show chunkSize ++ "\n\n\n"
 
-----------------------------------------------------------------------------------------------------
--- empty state
+-- | Empty state.
 emptyGeneratorState :: GeneratorState
 emptyGeneratorState = GeneratorState { freqs     = V.empty
                                      , oscIDs    = V.empty
@@ -67,4 +47,3 @@ emptyGeneratorState = GeneratorState { freqs     = V.empty
                                      , maxRX     = 0 / 0
                                      , chunkSize = 0
                                      }
-----------------------------------------------------------------------------------------------------

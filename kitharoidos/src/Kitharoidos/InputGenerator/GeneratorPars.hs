@@ -1,30 +1,10 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.InputGenerator.GeneratorPars
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.InputGenerator.GeneratorPars (
   GeneratorPars (GeneratorPars, freqs, buffSize, chunkSize, r', inputDt, maxRX)
 ) where
 
 import qualified Data.Vector.Unboxed as V
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Parameters of input generator
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Parameters of input generator.
 data GeneratorPars = GeneratorPars { freqs      :: !(V.Vector Double)
                                    , buffSize   :: !Int
                                    , chunkSize  :: !Int
@@ -32,4 +12,3 @@ data GeneratorPars = GeneratorPars { freqs      :: !(V.Vector Double)
                                    , inputDt    :: !Double
                                    , maxRX      :: !Double
                                    }
-

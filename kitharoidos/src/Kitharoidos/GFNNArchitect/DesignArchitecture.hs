@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNArchitect.DesignArchitecture
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNArchitect.DesignArchitecture (
@@ -25,13 +11,7 @@ import qualified Data.Vector as G
 import Control.ContStuff
 import Control.Monad.ST
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Design architecture of GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Design architecture of GFNN.
 designArchitecture :: ArchitectPars -> StateT r Architecture m Architecture
 designArchitecture architectPars
   = do setOscLN architectPars
@@ -46,11 +26,7 @@ designArchitecture architectPars
        setConnLIDs
        get
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set number of layers of oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set number of layers of oscillators.
 setOscLN :: ArchitectPars -> StateT r Architecture m ()
 setOscLN ArchitectPars {oscLPitches}
   = StateT
@@ -58,21 +34,13 @@ setOscLN ArchitectPars {oscLPitches}
          = \cont architecture -> cont () (architecture {oscLN = G.length oscLPitches})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- for each layer of oscillators, get its size
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | For each layer of oscillators, get its size.
 getOscLSizes :: ArchitectPars -> StateT r Architecture m (V.Vector Int)
 getOscLSizes ArchitectPars {oscLPitches}
   = StateT
       {getStateT = \cont architecture -> cont (G.convert $ G.map V.length oscLPitches) architecture}
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- for each oscillator, set ID of its layer
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | For each oscillator, set ID of its layer.
 setOscLIDs :: V.Vector Int -> StateT r Architecture m ()
 setOscLIDs oscLSizes
   = StateT
@@ -85,11 +53,7 @@ setOscLIDs oscLSizes
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set layout of oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set layout of oscillators.
 setOscLayout :: ArchitectPars -> V.Vector Int -> StateT r Architecture m ()
 setOscLayout ArchitectPars {inputOscLIDs, hiddOscLIDs} oscLSizes
   = StateT
@@ -107,11 +71,7 @@ setOscLayout ArchitectPars {inputOscLIDs, hiddOscLIDs} oscLSizes
       }
     where oscLBegs = V.prescanl (+) 0 oscLSizes
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- for each oscillator, set its natural frequency
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | For each oscillator, set its natural frequency.
 setOscPitches :: ArchitectPars -> StateT r Architecture m ()
 setOscPitches ArchitectPars {oscLPitches}
   = StateT
@@ -120,16 +80,12 @@ setOscPitches ArchitectPars {oscLPitches}
              cont () (architecture {oscPitches = V.concat . G.toList $ oscLPitches})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- for each layer of connections, get its size
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- For each layer of connections, get its size.
 getConnLSizes :: ArchitectPars -> V.Vector Int -> StateT r Architecture m (V.Vector Int)
 getConnLSizes ArchitectPars {fixedConnLIDs, hebbConnLIDs} oscLSizes
   = StateT
       {getStateT
-         = \cont architecture@(Architecture {oscLN}) ->
+         = \cont architecture@Architecture {oscLN} ->
              cont (V.take (V.length fixedConnLIDs + V.length hebbConnLIDs) $
                    V.generate (2 * oscLN - 1)
                               (\i -> (oscLSizes1 V.! (mod i 2 * oscLN + quot i       2)) *
@@ -140,11 +96,7 @@ getConnLSizes ArchitectPars {fixedConnLIDs, hebbConnLIDs} oscLSizes
       }
     where oscLSizes1 = V.map (subtract 1) oscLSizes V.++ oscLSizes
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set layout of connections (1 = fixed connection)
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set layout of connections (1 = fixed connection)
 setConnLayout :: ArchitectPars -> V.Vector Int -> StateT r Architecture m ()
 setConnLayout ArchitectPars {fixedConnLIDs, hebbConnLIDs} connLSizes
   = StateT
@@ -162,16 +114,12 @@ setConnLayout ArchitectPars {fixedConnLIDs, hebbConnLIDs} connLSizes
       }
     where connLBegs = V.prescanl (+) 0 connLSizes
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- for each connection, set ID of its target and source oscillator
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | For each connection, set ID of its target and source oscillator.
 setEdges :: V.Vector Int -> V.Vector Int -> StateT r Architecture m ()
 setEdges oscLSizes connLSizes
   = StateT
       {getStateT
-         = \cont architecture@(Architecture {oscLIDs}) ->
+         = \cont architecture@Architecture {oscLIDs} ->
              let bounds   = V.map (\(prevOscLStart, prevOscLSize, thisOscLSize) ->
                                      (prevOscLStart, prevOscLSize + thisOscLSize)
                                   )
@@ -187,16 +135,12 @@ setEdges oscLSizes connLSizes
              in  cont () (architecture {is, js})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- for each connection, set ID of its layer
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | For each connection, set ID of its layer
 setConnLIDs :: StateT r Architecture m ()
 setConnLIDs
   = StateT
       {getStateT
-         = \cont architecture@(Architecture {oscLIDs, is, js}) ->
+         = \cont architecture@Architecture {oscLIDs, is, js} ->
              cont () (architecture
                         {connLIDs
                            = V.zipWith (+) (V.backpermute oscLIDs is) (V.backpermute oscLIDs js)}

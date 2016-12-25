@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNRenderer.InitRenderer
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns, BangPatterns #-}
 
 module Kitharoidos.GFNNRenderer.InitRenderer (
@@ -30,13 +16,7 @@ import qualified Data.Vector.Unboxed as V
 import Control.Monad
 import Control.ContStuff
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Initialize GFNN Renderer
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Initialize GFNN Renderer.
 initRenderer :: Architecture -> RendererPars -> StateT r RendererState m (IO ())
 initRenderer architecture rendererPars
   = do setStaffLineD rendererPars
@@ -51,11 +31,7 @@ initRenderer architecture rendererPars
        oscColumn <- getOscColumn staffHeight  (V.last xs, ys) rendererPars
        return $ connGrid >> oscColumn
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set distance between staff lines
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set distance between staff lines.
 setStaffLineD :: RendererPars -> StateT r RendererState m ()
 setStaffLineD RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD}
   = StateT {getStateT
@@ -63,11 +39,7 @@ setStaffLineD RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD}
                   cont () (rendererState {Kitharoidos.GFNNRenderer.RendererState.staffLineD})
            }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- get staff height
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Get staff height.
 getStaffHeight :: RendererPars -> StateT r RendererState m Double
 getStaffHeight RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD, ledgeLineN}
   = StateT {getStateT
@@ -75,11 +47,7 @@ getStaffHeight RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD, l
                   cont (fromIntegral (5 + ledgeLineN) * staffLineD) rendererState
            }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- get layout of canvas for rendering GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Get layout of canvas for rendering GFNN.
 getCanvasLayout :: Double -> Architecture -> RendererPars -> StateT r RendererState m (V.Vector Double, V.Vector Double)
 getCanvasLayout staffHeight Architecture {oscLN}
                             RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD, staffD}
@@ -95,11 +63,7 @@ getCanvasLayout staffHeight Architecture {oscLN}
           grandStaffHeightWithD = grandStaffHeight + staffD * staffLineD
           grandStaffHeight      = 2 * staffHeight
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- get vertical positions of neural oscillators on staff
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Get vertical positions of neural oscillators on staff.
 getOscStaffPoss :: Architecture -> RendererPars -> StateT r RendererState m (V.Vector Double)
 getOscStaffPoss Architecture {oscPitches} RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD}
   = StateT
@@ -107,11 +71,7 @@ getOscStaffPoss Architecture {oscPitches} RendererPars {Kitharoidos.GFNNRenderer
          = \cont rendererState -> cont (V.map (midiPitchToStaffPos staffLineD) oscPitches) rendererState
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set positions of neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set positions of neural oscillators.
 setOscPoss :: V.Vector Double -> (Double, V.Vector Double) -> Architecture -> StateT r RendererState m ()
 setOscPoss oscStaffPoss (x, ys) Architecture {oscLIDs}
   = StateT
@@ -122,11 +82,7 @@ setOscPoss oscStaffPoss (x, ys) Architecture {oscLIDs}
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set positions of connections on the grid
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set positions of connections on the grid.
 setConnPoss :: V.Vector Double -> (V.Vector Double, V.Vector Double) -> Architecture -> StateT r RendererState m ()
 setConnPoss oscStaffPoss (gridXs, gridYs) Architecture {oscLIDs, is, js}
   = StateT
@@ -144,11 +100,7 @@ setConnPoss oscStaffPoss (gridXs, gridYs) Architecture {oscLIDs, is, js}
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set note head width
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set note head width.
 setNoteHeadWidth :: Architecture -> RendererPars -> StateT r RendererState m ()
 setNoteHeadWidth Architecture {oscPitches} RendererPars {Kitharoidos.GFNNRenderer.RendererPars.staffLineD}
   = StateT
@@ -168,11 +120,7 @@ setNoteHeadWidth Architecture {oscPitches} RendererPars {Kitharoidos.GFNNRendere
                      )
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- set note head height
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Set note head height.
 setNoteHeadHeight :: RendererPars -> StateT r RendererState m ()
 setNoteHeadHeight RendererPars {Kitharoidos.GFNNRenderer.RendererPars.noteHeadHeight}
   = StateT
@@ -181,11 +129,7 @@ setNoteHeadHeight RendererPars {Kitharoidos.GFNNRenderer.RendererPars.noteHeadHe
              cont () (rendererState {Kitharoidos.GFNNRenderer.RendererState.noteHeadHeight})
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- get grid of staves for rendering connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Get grid of staves for rendering connections.
 getConnGrid :: Double -> (V.Vector Double, V.Vector Double) -> RendererPars -> StateT r RendererState m (IO ())
 getConnGrid staffHeight (gridXs, gridYs) rendererPars
   = StateT
@@ -194,11 +138,7 @@ getConnGrid staffHeight (gridXs, gridYs) rendererPars
              cont (grandStaffGrid staffHeight (gridXs, gridYs) rendererPars) rendererState
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- get column of staves for rendering neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Get column of staves for rendering neural oscillators.
 getOscColumn :: Double -> (Double, V.Vector Double) -> RendererPars -> StateT r RendererState m (IO ())
 getOscColumn staffHeight (x, ys) rendererPars
   = StateT

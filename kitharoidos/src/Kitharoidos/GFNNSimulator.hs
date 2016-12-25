@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNSimulator
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.GFNNSimulator (
   SimulatorPars (SimulatorPars, oscLPars, connLPars, connKernel, gfnnDt),
   View (View, normAvgRZs, instFreqs, normAvgRCs),
@@ -30,19 +16,13 @@ import Control.Monad
 import qualified Data.Vector.Unboxed as V
 import Data.Complex
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run GFNN simulator
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run GFNN simulator.
 runGFNNSimulator :: Architecture -> SimulatorPars ->
                     IO (V.Vector (Double, Double)) -> (View -> IO ()) -> IO ()
 runGFNNSimulator architecture simulatorPars readInputs writeView
   = evalStateT emptyGFNN $ do
       initSimulator architecture simulatorPars
-      forever $ do
+      forever $
         liftIO readInputs >>= V.mapM runGFNN >>=
           \results -> case V.length results of
             0 -> return ()

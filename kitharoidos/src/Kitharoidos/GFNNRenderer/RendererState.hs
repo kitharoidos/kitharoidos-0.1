@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNRenderer.RendererState
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNRenderer.RendererState (
@@ -21,13 +7,7 @@ module Kitharoidos.GFNNRenderer.RendererState (
 
 import qualified Data.Vector.Unboxed as V
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- State of GFNN renderer
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | State of GFNN renderer.
 data RendererState = RendererState { staffLineD     :: !Double
                                    , oscPoss        :: !(V.Vector (Double, Double))
                                    , connPoss       :: !(V.Vector (Double, Double))
@@ -44,8 +24,7 @@ instance Show RendererState where
       "  noteHeadWidth: "  ++ show noteHeadWidth       ++ "\n\n" ++
       "  noteHeadHeight: " ++ show noteHeadHeight      ++ "\n\n\n"
 
-----------------------------------------------------------------------------------------------------
--- empty state
+-- | Empty state.
 emptyRendererState :: RendererState
 emptyRendererState
   = RendererState { staffLineD     = 0
@@ -54,4 +33,3 @@ emptyRendererState
                   , noteHeadWidth  = 0
                   , noteHeadHeight = 0
                   }
-----------------------------------------------------------------------------------------------------

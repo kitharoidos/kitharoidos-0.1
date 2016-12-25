@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.MIDIReceiver
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.MIDIReceiver (
@@ -30,13 +16,7 @@ import Control.Exception
 import Control.Monad
 import Control.Concurrent
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run receiver of MIDI messages
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run receiver of MIDI messages.
 runMIDIReceiver :: ReceiverPars -> ([PMEvent] -> IO ()) -> IO ()
 runMIDIReceiver ReceiverPars {midiDt} sendMIDI
   = bracket (bracketOnError initReceiver (const terminateReceiver) (const openMIDI))

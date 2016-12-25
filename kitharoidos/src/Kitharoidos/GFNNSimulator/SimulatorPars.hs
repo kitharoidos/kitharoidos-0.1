@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNSimulator.SimulatorPars
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNSimulator.SimulatorPars (
@@ -22,13 +8,7 @@ import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector as G
 import Data.Complex
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Parameters for GFNN simulator
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Parameters for GFNN simulator.
 data SimulatorPars = SimulatorPars { oscLPars   :: !(G.Vector (Double, V.Vector (Double, Double), Double))
 
                                    , connLPars  :: !(G.Vector (Double, Double, Double))
@@ -47,4 +27,3 @@ instance Show SimulatorPars where
                               )         ++ "\n\n" ++
       "  connLPars: " ++ show connLPars ++ "\n\n" ++
       "  gfnnDt: "    ++ show gfnnDt ++ "\n\n\n"
-

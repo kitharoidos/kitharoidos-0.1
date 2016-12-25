@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNArchitect
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 module Kitharoidos.GFNNArchitect (
   ArchitectPars (ArchitectPars, inputOscLIDs, hiddOscLIDs, oscLPitches, fixedConnLIDs, hebbConnLIDs),
   Architecture (Architecture, oscLN, oscLIDs, inputOscIDs, hiddOscIDs, oscPitches
@@ -25,12 +11,6 @@ import Kitharoidos.GFNNArchitect.DesignArchitecture
 import Kitharoidos.GFNNArchitect.Architecture
 import Control.ContStuff
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Run GFNN architect
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Run GFNN architect.
 runGFNNArchitect :: ArchitectPars -> IO Architecture
 runGFNNArchitect = evalStateT emptyArchitecture . designArchitecture

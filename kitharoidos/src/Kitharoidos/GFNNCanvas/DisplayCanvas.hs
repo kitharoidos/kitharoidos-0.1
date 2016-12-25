@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNCanvas.DisplayCanvas
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNCanvas.DisplayCanvas (
@@ -23,22 +9,17 @@ import Kitharoidos.GFNNCanvas.CanvasError
 import Graphics.UI.GLFW
 import Graphics.Rendering.OpenGL
 import Control.Exception
+import Control.Monad
 import System.Environment (getProgName)
 import System.Exit
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Display canvas for rendering GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Display canvas for rendering GFNN.
 displayCanvas :: CanvasPars -> IO ()
 displayCanvas CanvasPars {canvasSize, canvasColor} = do
   openWindow canvasSize
              [DisplayRGBBits 32 32 32, DisplayAlphaBits 32, DisplayDepthBits 32, DisplayDepthBits 32]
              Window >>=
-    (\result -> if result then return () else throwIO GLFWWindowOpeningError)
+    (\result -> unless result (throwIO GLFWWindowOpeningError))
   progName <- getProgName
   windowTitle         $= progName
   windowSizeCallback  $= \size@(Size w h) -> do

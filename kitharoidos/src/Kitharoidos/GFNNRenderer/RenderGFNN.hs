@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Kitharoidos.GFNNRenderer.RenderGFNN
--- Copyright   :
--- License     :  AllRightsReserved
---
--- Maintainer  :
--- Stability   :
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Kitharoidos.GFNNRenderer.RenderGFNN (
@@ -27,29 +13,19 @@ import Control.ContStuff
 import Control.Monad
 import GHC.Float
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- Render GFNN
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Render GFNN.
 renderGFNN :: View -> StateT r RendererState m (IO ())
 renderGFNN view
   = do oscRendering  <- renderOscs view
        connRendering <- renderConns view
        return $ oscRendering >> connRendering
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- render neural oscillators
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Render neural oscillators.
 renderOscs :: View -> StateT r RendererState m (IO ())
 renderOscs View {normAvgRZs, instFreqs}
   = StateT
       {getStateT
-         = \cont rendererState@(RendererState {staffLineD, oscPoss, noteHeadWidth, noteHeadHeight}) ->
+         = \cont rendererState@RendererState {staffLineD, oscPoss, noteHeadWidth, noteHeadHeight} ->
              cont (renderPrimitive Quads
                      (V.mapM_ (\((x, y), f, rZ) -> do
                                  let y1    = y + freqToStaffPos staffLineD f
@@ -67,16 +43,12 @@ renderOscs View {normAvgRZs, instFreqs}
                   rendererState
       }
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
--- render Hebbian connections
-----------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------
+-- | Render Hebbian connections.
 renderConns :: View -> StateT r RendererState m (IO ())
 renderConns View {normAvgRCs}
   = StateT
       {getStateT
-         = \cont rendererState@(RendererState {staffLineD, connPoss, noteHeadWidth}) ->
+         = \cont rendererState@RendererState {staffLineD, connPoss, noteHeadWidth} ->
              cont (renderPrimitive Quads
                      (V.mapM_ (\((x, y), rC) -> do
                                  let halfW = noteHeadWidth / 2
