@@ -32,3 +32,4 @@ executable kitharoidos
                      , stm-chans
                      , vector
                      , optparse-applicative
+  ghc-options:       -O2 -threaded -rtsopts -with-rtsopts=-N
